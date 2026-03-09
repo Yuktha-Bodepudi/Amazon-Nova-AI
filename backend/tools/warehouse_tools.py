@@ -14,6 +14,9 @@ from typing import Optional
 from collections import Counter, defaultdict
 from langchain_core.tools import tool
 
+# Data files in project root (parent of backend/)
+DATA_DIR = Path(__file__).resolve().parent.parent.parent
+
 
 # ── Data loading tools ─────────────────────────────────────────────────────────
 
@@ -24,9 +27,9 @@ def load_shift_reports(zone: Optional[str] = None, shift: Optional[str] = None) 
     Optionally filter by zone (e.g. 'B2', 'C3') or shift ('day', 'night').
     Returns JSON array of matching reports with their issues.
     """
-    path = Path("data/synthetic_debriefs_1000.json")
+    path = Path(DATA_DIR) / "synthetic_debriefs_1000.json"
     if not path.exists():
-        return json.dumps({"error": "File not found: data/synthetic_debriefs_1000.json"})
+        return json.dumps({"error": "File not found: synthetic_debriefs_1000.json (project root)"})
 
     with open(path) as f:
         data = json.load(f)
@@ -60,7 +63,7 @@ def load_safety_incidents(warehouse_id: Optional[str] = None,
     or shift (Morning/Afternoon/Night).
     Returns incident counts and top patterns.
     """
-    path = Path("data/amazon_warehouse_safety_logs.json")
+    path = Path(DATA_DIR) / "amazon_warehouse_safety_logs.json"
     if not path.exists():
         return json.dumps({"error": "File not found"})
 
@@ -111,7 +114,7 @@ def load_qc_failures(warehouse_id: Optional[str] = None,
      Missing Parts/Label Error/Packaging Damage).
     Returns failure rates and defect patterns.
     """
-    path = Path("data/amazon_warehouse_qc_flags.csv")
+    path = Path(DATA_DIR) / "amazon_warehouse_qc_flags.csv"
     if not path.exists():
         return json.dumps({"error": "File not found"})
 
@@ -166,7 +169,7 @@ def load_customer_returns(category: Optional[str] = None,
     or customer_type (Prime/Non-Prime).
     Returns return rates and patterns.
     """
-    path = Path("data/amazon_synthetic_returns.csv")
+    path = Path(DATA_DIR) / "amazon_synthetic_returns.csv"
     if not path.exists():
         return json.dumps({"error": "File not found"})
 
@@ -207,8 +210,8 @@ def find_product_overlap() -> str:
     and then get returned by customers, indicating a quality pipeline break.
     Returns the overlapping products grouped by category.
     """
-    qc_path  = Path("data/amazon_warehouse_qc_flags.csv")
-    ret_path = Path("data/amazon_synthetic_returns.csv")
+    qc_path  = Path(DATA_DIR) / "amazon_warehouse_qc_flags.csv"
+    ret_path = Path(DATA_DIR) / "amazon_synthetic_returns.csv"
     if not qc_path.exists() or not ret_path.exists():
         return json.dumps({"error": "Data files not found"})
 
@@ -248,8 +251,8 @@ def compare_shift_risk() -> str:
     Correlates safety log injury rates with debrief issue severity by shift.
     Returns side-by-side comparison to identify which shift has highest risk.
     """
-    s_path = Path("data/amazon_warehouse_safety_logs.json")
-    d_path = Path("data/synthetic_debriefs_1000.json")
+    s_path = Path(DATA_DIR) / "amazon_warehouse_safety_logs.json"
+    d_path = Path(DATA_DIR) / "synthetic_debriefs_1000.json"
     if not s_path.exists():
         return json.dumps({"error": "Safety log not found"})
 
@@ -296,8 +299,8 @@ def get_warehouse_scorecard(warehouse_id: str) -> str:
     warehouse_id must be one of: WH-101, WH-203, WH-305, WH-410, WH-512
     Returns combined risk score and top issues for that warehouse.
     """
-    s_path = Path("data/amazon_warehouse_safety_logs.json")
-    q_path = Path("data/amazon_warehouse_qc_flags.csv")
+    s_path = Path(DATA_DIR) / "amazon_warehouse_safety_logs.json"
+    q_path = Path(DATA_DIR) / "amazon_warehouse_qc_flags.csv"
 
     if not s_path.exists() or not q_path.exists():
         return json.dumps({"error": "Data files not found"})
@@ -344,8 +347,8 @@ def get_category_quality_report(category: str) -> str:
     category must be one of: Electronics, Sports, Clothing, Home, Beauty
     Shows QC fail rate AND customer defect return rate for the same category.
     """
-    q_path = Path("data/amazon_warehouse_qc_flags.csv")
-    r_path = Path("data/amazon_synthetic_returns.csv")
+    q_path = Path(DATA_DIR) / "amazon_warehouse_qc_flags.csv"
+    r_path = Path(DATA_DIR) / "amazon_synthetic_returns.csv"
 
     with open(q_path, newline="") as f:
         qc = [r for r in csv.DictReader(f) if r["category"] == category]

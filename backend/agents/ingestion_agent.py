@@ -10,6 +10,9 @@ from collections import Counter
 from langchain_core.messages import SystemMessage
 from state import WarehouseState
 
+# Data files live in project root (parent of backend/)
+DATA_DIR = Path(__file__).resolve().parent.parent.parent
+
 
 def _empty() -> dict:
     return {
@@ -36,7 +39,7 @@ def _empty() -> dict:
 
 def _load_debriefs() -> list[dict]:
     SEV = {1:"low",2:"low",3:"medium",4:"high",5:"critical"}
-    with open("data/synthetic_debriefs_1000.json") as f:
+    with open(DATA_DIR / "synthetic_debriefs_1000.json") as f:
         raw = json.load(f)
     out = []
     for item in raw:
@@ -69,7 +72,7 @@ def _load_debriefs() -> list[dict]:
 
 def _load_safety() -> list[dict]:
     SEV = {"Near Miss":"low","Minor":"low","Moderate":"medium","Severe":"high"}
-    with open("data/amazon_warehouse_safety_logs.json") as f:
+    with open(DATA_DIR / "amazon_warehouse_safety_logs.json") as f:
         raw = json.load(f)
     out = []
     for item in raw:
@@ -103,7 +106,7 @@ def _load_safety() -> list[dict]:
 def _load_qc() -> list[dict]:
     SEV = {"Low":"low","Medium":"medium","High":"high"}
     out = []
-    with open("data/amazon_warehouse_qc_flags.csv", newline="") as f:
+    with open(DATA_DIR / "amazon_warehouse_qc_flags.csv", newline="") as f:
         for row in csv.DictReader(f):
             checked   = int(row["quantity_checked"] or 0)
             defective = int(row["quantity_defective"] or 0)
@@ -135,7 +138,7 @@ def _load_qc() -> list[dict]:
 def _load_returns() -> list[dict]:
     DEFECT = {"Item damaged","Defective product","Wrong item received","Missing parts"}
     out = []
-    with open("data/amazon_synthetic_returns.csv", newline="") as f:
+    with open(DATA_DIR / "amazon_synthetic_returns.csv", newline="") as f:
         for row in csv.DictReader(f):
             reason = row["return_reason"]
             r = _empty()
@@ -168,15 +171,15 @@ def ingestion_node(state: WarehouseState) -> dict:
     print("\n[Ingestion Agent] Loading 4 data sources...")
 
     LOADERS = {
-        "debriefs": ("data/synthetic_debriefs_1000.json",      _load_debriefs),
-        "safety":   ("data/amazon_warehouse_safety_logs.json",  _load_safety),
-        "qc":       ("data/amazon_warehouse_qc_flags.csv",      _load_qc),
-        "returns":  ("data/amazon_synthetic_returns.csv",       _load_returns),
+        "debriefs": (DATA_DIR / "synthetic_debriefs_1000.json",      _load_debriefs),
+        "safety":   (DATA_DIR / "amazon_warehouse_safety_logs.json",  _load_safety),
+        "qc":       (DATA_DIR / "amazon_warehouse_qc_flags.csv",      _load_qc),
+        "returns":  (DATA_DIR / "amazon_synthetic_returns.csv",       _load_returns),
     }
 
     all_records = []
     for name, (path, loader) in LOADERS.items():
-        if not Path(path).exists():
+        if not path.exists():
             print(f"  ⚠  Missing: {path}")
             continue
         try:
@@ -188,7 +191,7 @@ def ingestion_node(state: WarehouseState) -> dict:
 
     if not all_records:
         return {
-            "error": "No records loaded. Copy data files to backend/data/",
+            "error": "No records loaded. Place data files in the project root.",
             "current_step": "ingestion",
             "progress": 0,
             "messages": [SystemMessage(content="Ingestion failed: no data files found.")],

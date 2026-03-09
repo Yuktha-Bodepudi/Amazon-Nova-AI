@@ -27,11 +27,13 @@ _status  = {"running":False,"step":None,"progress":0,"message":"","complete":Fal
 _results = {}          # last completed pipeline results
 _lock    = threading.Lock()
 
+# Data files: project root (parent of backend/)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 REQUIRED_FILES = [
-    "data/synthetic_debriefs_1000.json",
-    "data/amazon_warehouse_safety_logs.json",
-    "data/amazon_warehouse_qc_flags.csv",
-    "data/amazon_synthetic_returns.csv",
+    PROJECT_ROOT / "synthetic_debriefs_1000.json",
+    PROJECT_ROOT / "amazon_warehouse_safety_logs.json",
+    PROJECT_ROOT / "amazon_warehouse_qc_flags.csv",
+    PROJECT_ROOT / "amazon_synthetic_returns.csv",
 ]
 
 
@@ -93,9 +95,9 @@ def _run_pipeline():
 async def run_pipeline(bg: BackgroundTasks):
     if _status["running"]:
         raise HTTPException(409, "Pipeline already running")
-    missing = [p for p in REQUIRED_FILES if not Path(p).exists()]
+    missing = [str(p) for p in REQUIRED_FILES if not p.exists()]
     if missing:
-        raise HTTPException(404, f"Missing data files: {missing}. Copy them to backend/data/")
+        raise HTTPException(404, f"Missing data files: {missing}. Place them in the project root.")
     bg.add_task(_run_pipeline)
     return {"status": "started", "message": "LangGraph pipeline starting..."}
 

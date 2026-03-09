@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WarehouseIQ — Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <h1>WarehouseIQ</h1>
+    <p class="subtitle">FC Riverside — LangGraph pipeline dashboard</p>
+    <div class="health" id="health"></div>
+  </header>
+
+  <main class="main">
+    <!-- Pipeline -->
+    <section class="card pipeline-card">
+      <h2>Pipeline</h2>
+      <div class="pipeline-actions">
+        <button type="button" class="btn btn-primary" id="runPipeline" disabled>Run pipeline</button>
+      </div>
+      <div class="status" id="pipelineStatus">
+        <p class="status-line"><span class="label">Status:</span> <span id="statusText">—</span></p>
+        <p class="status-line"><span class="label">Step:</span> <span id="stepText">—</span></p>
+        <div class="progress-wrap">
+          <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+        <p class="status-line progress-pct"><span id="progressPct">0</span>%</p>
+        <p class="status-line error" id="errorText"></p>
+      </div>
+    </section>
+
+    <!-- Results tabs (always visible; content loads after pipeline run) -->
+    <section class="card results-card" id="resultsSection">
+      <h2>Results</h2>
+      <p class="hint" id="resultsHint">Run the pipeline above, then click Refresh results.</p>
+      <div class="results-toolbar">
+        <button type="button" class="btn btn-secondary" id="refreshResults">Refresh results</button>
+      </div>
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="patterns" role="tab">Patterns</button>
+        <button type="button" class="tab" data-tab="actions" role="tab">Actions</button>
+        <button type="button" class="tab" data-tab="alerts" role="tab">Alerts</button>
+        <button type="button" class="tab" data-tab="stats" role="tab">Stats</button>
+        <button type="button" class="tab" data-tab="records" role="tab">Records</button>
+      </div>
+      <div class="tab-panels">
+        <div class="tab-panel active" id="panel-patterns" role="tabpanel">
+          <div id="patternsContent" class="content-list"></div>
+        </div>
+        <div class="tab-panel" id="panel-actions" role="tabpanel">
+          <div id="actionsContent" class="content-list"></div>
+        </div>
+        <div class="tab-panel" id="panel-alerts" role="tabpanel">
+          <div id="alertsContent" class="content-list"></div>
+        </div>
+        <div class="tab-panel" id="panel-stats" role="tabpanel">
+          <pre id="statsContent" class="content-pre"></pre>
+        </div>
+        <div class="tab-panel" id="panel-records" role="tabpanel">
+          <div class="records-meta"><span id="recordsTotal">0</span> records (showing up to 200)</div>
+          <div id="recordsContent" class="content-list records-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Query -->
+    <section class="card query-card">
+      <h2>Ask a question</h2>
+      <p class="hint">Uses pipeline results. Run the pipeline first if you haven’t.</p>
+      <div class="query-form">
+        <input type="text" id="questionInput" placeholder="e.g. What are the top safety issues?" />
+        <button type="button" class="btn btn-primary" id="submitQuery">Ask</button>
+      </div>
+      <div class="answer-wrap" id="answerWrap" hidden>
+        <p class="label">Answer:</p>
+        <div class="answer-text" id="answerText"></div>
+      </div>
+    </section>
+
+    <!-- Voice -->
+    <section class="card voice-card">
+      <h2>Voice (audio)</h2>
+      <p class="hint">Upload an audio file; get transcript + spoken response.</p>
+      <div class="voice-form">
+        <input type="file" id="audioFile" accept="audio/*" />
+        <button type="button" class="btn btn-secondary" id="submitVoice">Send</button>
+      </div>
+      <div class="voice-result" id="voiceResult" hidden>
+        <p class="label">Transcript:</p>
+        <p id="transcriptText"></p>
+        <p class="label">Response:</p>
+        <p id="responseText"></p>
+        <audio id="responseAudio" controls></audio>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
