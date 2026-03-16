@@ -70,9 +70,9 @@ def voice_node(state: WarehouseState) -> dict:
 # ── Query-time functions (called by API endpoints, not the graph) ──────────────
 
 VOICE_CHAIN_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", "{system}"),
+     ("human", "{question}"),
     MessagesPlaceholder(variable_name="history"),
-    ("human", "{question}"),
+    ("system", "{system}"), 
 ])
 
 
