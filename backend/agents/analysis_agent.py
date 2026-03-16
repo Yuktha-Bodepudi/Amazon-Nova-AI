@@ -17,9 +17,9 @@ from state import WarehouseState
 
 def _nova_lite() -> ChatBedrockConverse:
     return ChatBedrockConverse(
-        model="amazon.nova-lite-v1:0",
+        model="amazon.nova-lite-v2:0",
         region_name="us-east-1",
-        max_tokens=500,
+        max_tokens=1000,
         temperature=0.2,
     )
 
