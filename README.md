@@ -18,11 +18,12 @@ WarehouseIQ is a 5-agent agentic AI system built on LangGraph and Amazon Nova th
 |-------|------|
 | Amazon Nova Pro | Root Cause Agent — autonomous ReAct tool-calling loop |
 | Amazon Nova Lite | Analysis Agent — record enrichment, sentiment, anomaly detection |
-| Amazon Nova Sonic | Voice Agent — speech-to-speech supervisor Q&A |
+| Amazon Nova Sonic | Voice Agent — integrated, requires Python 3.12+ |
 
 ---
 
 ## 5-Agent Pipeline
+
 ```
 START → Ingestion → Analysis → Root Cause → Action → Voice → END
 ```
@@ -40,8 +41,8 @@ Runs an autonomous ReAct tool-calling loop across 10 warehouse tools. Nova Pro d
 ### 4. Action Agent
 Converts patterns into prioritized remediation plans with owners, deadlines, and measurable KPIs.
 
-### 5. Voice Agent — Nova Sonic
-Lets shift supervisors query findings verbally and receive spoken, evidence-backed answers in real time.
+### 5. Voice Agent — Nova Pro + Polly
+Lets shift supervisors type questions and receive detailed, evidence-backed answers via Amazon Nova Pro. Full Nova Sonic speech-to-speech is implemented in the codebase and activates automatically on Python 3.12+.
 
 ---
 
@@ -99,11 +100,12 @@ npm run dev
 - **7 root cause patterns** including fire hazard concentration in WH-305 Packing Zone
 - **Forklift collision clustering** in WH-203 Receiving Dock: 28 incidents, 73 injuries
 - **83% QC failure rate** traced to specific warehouses and defect categories
-- **3 prioritized action items** with 1-day, 7-day, and 30-day deadlines
+- **5 prioritized action items** with 1-day, 7-day, and 30-day deadlines
 
 ---
 
 ## Project Structure
+
 ```
 backend/
   main.py                  ← FastAPI + upload endpoints
